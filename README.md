@@ -16,11 +16,11 @@ Neubau von `skipper-warnemuende.de` auf **Lovable** (React + TypeScript + Tailwi
 
 | Phase | Inhalt | Status |
 |---|---|---|
-| 1 | Design-System (Tokens, Archivo/Inter/Caveat, WaveDivider, SkipperIcon-Set, PhotoPlaceholder, Logo-Interim), Header mit Live-Öffnungsstatus, Footer „Törnplan", 404, Homepage (8 Sektionen), Supabase-Schema + RLS + Seed, Reservierungs-Modal, `/speisekarte` aus DB, robots/sitemap/`_redirects`/Restaurant-JSON-LD | 🔄 läuft |
-| 2 | Alle Unterseiten (`/fruehstueck`, `/terrasse`, `/events`, `/news`, `/feiern`, `/bootsservice`, `/bootszubehoer`, `/shop`, `/ueber-uns`, `/kontakt`, Rechtstexte) + Formulare + per-Page-JSON-LD | ⏳ |
-| 3 | `/admin` (Supabase Auth, Whitelist: info@skippers-bistro.de, info@gradore.de) + Edge-Function-Mail-Stub | ⏳ |
-| 4 | `/en`-Routen + i18n + hreflang | ⏳ |
-| 5 | Audit-Runde (SEO/Psychologie/Anti-KI-Manifest) + Fixes | ⏳ |
+| 1 | Design-System (Tokens, Archivo/Inter/Caveat, WaveDivider, SkipperIcon-Set, PhotoPlaceholder, Logo-Interim), Header mit Live-Öffnungsstatus, Footer „Törnplan", 404, Homepage (8 Sektionen), Supabase-Schema + RLS + Seed, Reservierungs-Modal, `/speisekarte` aus DB, robots/sitemap/`_redirects`/Restaurant-JSON-LD | ✅ |
+| 2 | Alle Unterseiten (`/fruehstueck`, `/terrasse`, `/events`, `/news`, `/feiern`, `/bootsservice`, `/bootszubehoer`, `/shop`, `/ueber-uns`, `/kontakt`, Rechtstexte) + Formulare + per-Page-JSON-LD | ✅ |
+| 3 | `/admin` (Supabase Auth, Whitelist: info@skippers-bistro.de, info@gradore.de) + Edge-Function-Mail-Stub, Storage-Galerie | ✅ |
+| 4 | `/en`-Routen + i18n + hreflang + EN-Sitemap | ✅ |
+| 5 | Audit-Runde: 39 verifizierte Findings ([`docs/audit-findings.md`](docs/audit-findings.md)) als Fix-Runde an Lovable | 🔄 Fixes laufen |
 
 ## Verbindliche Quellen
 
