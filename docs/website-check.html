@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Website-Check: Skipper's Bistro Warnemünde | Analyse & Konzept</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#211c5c;          /* Skipper's Logo-Blau */
+    --navy-deep:#15113f;
+    --navy-ink:#2a2560;
+    --gold:#ffaf04;          /* Akzent aus bestehender CI */
+    --gold-soft:#ffe8aa;
+    --cream:#faf6ee;         /* Papier / Segeltuch */
+    --paper:#fffdf8;
+    --sand:#c9b28a;          /* Holzfassade des Gebäudes */
+    --wood:#8b6f47;
+    --sea:#327893;           /* Petrol aus bestehendem Template */
+    --ok:#2e7d4f;
+    --warn:#e07b00;
+    --crit:#c8341f;
+    --line:#e6ddcc;
+    --ink:#241f33;
+    --ink-soft:#5b566e;
+    --radius:14px;
+    --shadow:0 10px 30px rgba(33,28,92,.10);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--ink);line-height:1.65;font-size:16px}
+  h1,h2,h3,.display{font-family:'Archivo',sans-serif}
+  img{max-width:100%}
+
+  /* ============ Wellen-Divider (Signature) ============ */
+  .wave{display:block;width:100%;height:34px}
+
+  /* ============ Header ============ */
+  .topbar{position:sticky;top:0;z-index:50;background:var(--navy);color:#fff;box-shadow:0 2px 12px rgba(0,0,0,.18)}
+  .topbar-inner{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:18px;padding:12px 22px}
+  .brandmark{display:flex;align-items:center;gap:12px;font-family:'Archivo';font-weight:900;letter-spacing:.06em;font-size:1.05rem;white-space:nowrap}
+  .brandmark svg{flex:none}
+  .topnav{display:flex;gap:4px;margin-left:auto;overflow-x:auto;scrollbar-width:none}
+  .topnav::-webkit-scrollbar{display:none}
+  .topnav a{color:#cfcaf0;text-decoration:none;font-size:.82rem;font-weight:600;padding:8px 12px;border-radius:8px;white-space:nowrap}
+  .topnav a:hover,.topnav a:focus-visible{background:rgba(255,255,255,.12);color:#fff;outline:none}
+
+  /* ============ Hero ============ */
+  .hero{background:linear-gradient(160deg,var(--navy) 0%,var(--navy-deep) 70%);color:#fff;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;right:-140px;top:-140px;width:520px;height:520px;border:2px dashed rgba(255,175,4,.25);border-radius:50%}
+  .hero::before{content:"";position:absolute;right:-60px;top:-60px;width:360px;height:360px;border:1px solid rgba(255,255,255,.12);border-radius:50%}
+  .hero-inner{max-width:1180px;margin:0 auto;padding:64px 22px 78px;position:relative;z-index:1}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(255,175,4,.14);border:1px solid rgba(255,175,4,.45);color:var(--gold);font-size:.75rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:7px 14px;border-radius:100px;margin-bottom:22px}
+  .hero h1{font-weight:900;font-size:clamp(2rem,5vw,3.4rem);line-height:1.08;letter-spacing:-.01em;max-width:820px}
+  .hero h1 em{font-style:normal;color:var(--gold)}
+  .hero p.sub{margin-top:18px;max-width:640px;color:#d9d5f2;font-size:1.05rem}
+  .hero-meta{margin-top:30px;display:flex;flex-wrap:wrap;gap:26px;font-size:.85rem;color:#b7b1e0}
+  .hero-meta b{display:block;color:#fff;font-size:.95rem}
+
+  main{max-width:1180px;margin:0 auto;padding:0 22px}
+  section{padding:68px 0 12px}
+  .kicker{color:var(--sea);font-weight:800;font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;margin-bottom:10px;font-family:'Archivo'}
+  .sec-title{font-size:clamp(1.5rem,3.4vw,2.2rem);font-weight:900;line-height:1.15;color:var(--navy);max-width:760px}
+  .sec-lead{margin-top:14px;max-width:720px;color:var(--ink-soft);font-size:1.02rem}
+
+  /* ============ Score-Übersicht ============ */
+  .score-wrap{display:grid;grid-template-columns:340px 1fr;gap:28px;margin-top:38px;align-items:stretch}
+  @media(max-width:900px){.score-wrap{grid-template-columns:1fr}}
+  .score-hero{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:30px;text-align:center;position:relative}
+  .score-hero .chartbox{position:relative;width:210px;height:210px;margin:6px auto 0}
+  .score-num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .score-num b{font-family:'Archivo';font-weight:900;font-size:3.4rem;line-height:1;color:var(--crit)}
+  .score-num span{font-size:.8rem;color:var(--ink-soft);margin-top:2px}
+  .grade{display:inline-block;margin-top:16px;background:#fdeae6;color:var(--crit);border:1px solid #f3c4ba;font-weight:800;font-family:'Archivo';padding:8px 18px;border-radius:100px;font-size:1rem}
+  .score-hero p.expl{margin-top:14px;font-size:.9rem;color:var(--ink-soft);text-align:left}
+
+  .subscores{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+  .subcard{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:20px 20px 18px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:8px;transition:transform .18s ease}
+  .subcard:hover{transform:translateY(-3px)}
+  .subcard .head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .subcard h3{font-size:1rem;font-weight:800;color:var(--navy)}
+  .pill{font-family:'Archivo';font-weight:900;font-size:1.05rem;padding:4px 12px;border-radius:100px;flex:none}
+  .pill.crit{background:#fdeae6;color:var(--crit)}
+  .pill.warn{background:#fdf0dd;color:var(--warn)}
+  .pill.mid{background:#fbf3d4;color:#9a7a00}
+  .pill.ok{background:#e4f2e9;color:var(--ok)}
+  .meter{height:8px;background:#efe8d8;border-radius:100px;overflow:hidden}
+  .meter i{display:block;height:100%;border-radius:100px}
+  .subcard p{font-size:.85rem;color:var(--ink-soft)}
+
+  /* ============ Paradox / Story ============ */
+  .paradox{margin-top:44px;background:var(--navy);border-radius:var(--radius);color:#fff;padding:38px;display:grid;grid-template-columns:1fr auto 1fr;gap:28px;align-items:center;box-shadow:var(--shadow);position:relative;overflow:hidden}
+  .paradox::after{content:"";position:absolute;left:50%;top:-80px;bottom:-80px;width:1px;background:rgba(255,255,255,.15)}
+  @media(max-width:820px){.paradox{grid-template-columns:1fr;text-align:center}.paradox::after{display:none}}
+  .paradox .big{font-family:'Archivo';font-weight:900;font-size:clamp(2.4rem,6vw,4rem);line-height:1}
+  .paradox .gold{color:var(--gold)}
+  .paradox .red{color:#ff8d75}
+  .paradox .lbl{font-size:.85rem;color:#c9c4ea;margin-top:6px;max-width:300px}
+  .paradox .vs{font-family:'Archivo';font-weight:900;color:rgba(255,255,255,.35);font-size:1.4rem;letter-spacing:.2em}
+  .paradox-note{max-width:1180px;margin:16px auto 0;font-size:.95rem;color:var(--ink-soft)}
+
+  /* ============ Bereichs-Analysen ============ */
+  .area{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);margin-top:26px;overflow:hidden}
+  .area-head{padding:24px 28px;display:flex;gap:16px;align-items:center;cursor:pointer;user-select:none}
+  .area-head:hover{background:#fbf7ee}
+  .area-icon{width:46px;height:46px;border-radius:12px;background:var(--navy);color:var(--gold);display:flex;align-items:center;justify-content:center;flex:none}
+  .area-head .t h3{font-size:1.15rem;font-weight:900;color:var(--navy)}
+  .area-head .t p{font-size:.85rem;color:var(--ink-soft)}
+  .area-head .right{margin-left:auto;display:flex;align-items:center;gap:14px}
+  .chev{transition:transform .25s;color:var(--sea);flex:none}
+  .area.open .chev{transform:rotate(180deg)}
+  .area-body{display:none;padding:6px 28px 30px;border-top:1px dashed var(--line)}
+  .area.open .area-body{display:block}
+  .explain{background:#f2f7f8;border-left:4px solid var(--sea);border-radius:0 10px 10px 0;padding:14px 18px;margin:18px 0;font-size:.92rem}
+  .explain b{color:var(--navy)}
+
+  .findings{width:100%;border-collapse:collapse;margin-top:12px;font-size:.9rem}
+  .findings th{text-align:left;font-family:'Archivo';font-weight:800;color:var(--navy);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;padding:10px 12px;border-bottom:2px solid var(--navy)}
+  .findings td{padding:12px;border-bottom:1px solid var(--line);vertical-align:top}
+  .findings tr:last-child td{border-bottom:none}
+  .sev{display:inline-block;font-weight:700;font-size:.72rem;padding:4px 10px;border-radius:100px;white-space:nowrap}
+  .sev.crit{background:#fdeae6;color:var(--crit)}
+  .sev.high{background:#fdf0dd;color:var(--warn)}
+  .sev.mid{background:#fbf3d4;color:#9a7a00}
+  .sev.pos{background:#e4f2e9;color:var(--ok)}
+  .findings td:first-child{font-weight:600;color:var(--navy);min-width:170px}
+
+  /* Ladezeit-Vergleich */
+  .speed{margin-top:22px;display:flex;flex-direction:column;gap:14px}
+  .speed-row{display:grid;grid-template-columns:190px 1fr 90px;gap:14px;align-items:center;font-size:.9rem}
+  @media(max-width:640px){.speed-row{grid-template-columns:1fr;gap:6px}}
+  .speed-bar{height:26px;border-radius:8px;position:relative;overflow:hidden;background:#efe8d8}
+  .speed-bar i{position:absolute;inset:0 auto 0 0;border-radius:8px}
+  .speed-row b{font-family:'Archivo';font-weight:800}
+
+  /* ============ Personas ============ */
+  .persona-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;margin-top:32px}
+  .persona{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:10px;position:relative;transition:transform .18s ease}
+  .persona:hover{transform:translateY(-3px)}
+  .persona .num{position:absolute;top:16px;right:18px;font-family:'Archivo';font-weight:900;color:#ece6d6;font-size:1.8rem;line-height:1}
+  .persona .avatar{width:52px;height:52px;border-radius:50%;background:var(--gold-soft);display:flex;align-items:center;justify-content:center;font-size:1.5rem;border:2px solid var(--gold)}
+  .persona h3{font-size:1.02rem;font-weight:800;color:var(--navy)}
+  .persona .tagline{font-size:.8rem;color:var(--sea);font-weight:600;margin-top:-6px}
+  .persona p{font-size:.85rem;color:var(--ink-soft)}
+  .persona .qa{font-size:.83rem;background:#f6f1e6;border-radius:10px;padding:10px 12px}
+  .persona .qa b{color:var(--navy);display:block;font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+  .persona .miss{display:flex;gap:8px;align-items:flex-start;font-size:.83rem;color:var(--crit);font-weight:600}
+  .persona .miss svg{flex:none;margin-top:2px}
+
+  /* ============ Wettbewerb ============ */
+  .comp-note{margin-top:18px;font-size:.9rem;color:var(--ink-soft);max-width:760px}
+  .chart-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:26px;margin-top:24px}
+  .chart-card h3{font-weight:800;color:var(--navy);margin-bottom:14px;font-size:1.05rem}
+
+  /* ============ Fahrplan ============ */
+  .phases{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;margin-top:32px}
+  .phase{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column}
+  .phase-head{padding:18px 22px;color:#fff;font-family:'Archivo'}
+  .phase-head .ph{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;opacity:.85;font-weight:700}
+  .phase-head h3{font-size:1.15rem;font-weight:900;margin-top:2px}
+  .phase ul{list-style:none;padding:18px 22px;display:flex;flex-direction:column;gap:10px;font-size:.88rem;flex:1}
+  .phase li{display:flex;gap:10px;align-items:flex-start}
+  .phase li svg{flex:none;margin-top:3px}
+  .phase .foot{padding:14px 22px;border-top:1px dashed var(--line);font-size:.8rem;color:var(--ink-soft)}
+
+  /* ============ CTA ============ */
+  .cta{margin:70px 0 0;background:linear-gradient(150deg,var(--navy),var(--navy-deep));border-radius:var(--radius);color:#fff;padding:52px 40px;text-align:center;position:relative;overflow:hidden}
+  .cta::before{content:"";position:absolute;left:-90px;bottom:-90px;width:280px;height:280px;border:2px dashed rgba(255,175,4,.3);border-radius:50%}
+  .cta h2{font-size:clamp(1.5rem,3.6vw,2.3rem);font-weight:900;max-width:700px;margin:0 auto}
+  .cta h2 em{font-style:normal;color:var(--gold)}
+  .cta p{margin:16px auto 0;max-width:600px;color:#d9d5f2}
+  .cta .btn{display:inline-block;margin-top:28px;background:var(--gold);color:var(--navy);font-family:'Archivo';font-weight:900;text-decoration:none;padding:15px 34px;border-radius:100px;font-size:1rem;letter-spacing:.02em;transition:transform .15s}
+  .cta .btn:hover{transform:translateY(-2px)}
+
+  footer{margin-top:60px;padding:34px 22px 44px;border-top:1px solid var(--line);text-align:center;font-size:.82rem;color:var(--ink-soft)}
+  footer b{color:var(--navy)}
+
+  .badge-legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:20px;font-size:.8rem;color:var(--ink-soft)}
+  .badge-legend span{display:flex;align-items:center;gap:6px}
+  .dot{width:11px;height:11px;border-radius:50%;display:inline-block}
+
+  @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<!-- ================= TOPBAR ================= -->
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brandmark">
+      <svg width="30" height="30" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+        <circle cx="20" cy="20" r="17" stroke="#ffaf04" stroke-width="2.5"/>
+        <circle cx="20" cy="20" r="6.5" stroke="#ffaf04" stroke-width="2.5"/>
+        <g stroke="#ffaf04" stroke-width="2.5" stroke-linecap="round">
+          <line x1="20" y1="3" x2="20" y2="10"/><line x1="20" y1="30" x2="20" y2="37"/>
+          <line x1="3" y1="20" x2="10" y2="20"/><line x1="30" y1="20" x2="37" y2="20"/>
+          <line x1="8" y1="8" x2="13" y2="13"/><line x1="27" y1="27" x2="32" y2="32"/>
+          <line x1="32" y1="8" x2="27" y2="13"/><line x1="13" y1="27" x2="8" y2="32"/>
+        </g>
+      </svg>
+      SKIPPER'S&nbsp;<span style="color:#ffaf04;font-weight:700">WEBSITE-CHECK</span>
+    </div>
+    <nav class="topnav" aria-label="Bereiche">
+      <a href="#gesamt">Gesamtnote</a>
+      <a href="#bereiche">6 Bereiche</a>
+      <a href="#personas">Ihre Gäste</a>
+      <a href="#wettbewerb">Wettbewerb</a>
+      <a href="#fahrplan">Fahrplan</a>
+    </nav>
+  </div>
+</div>
+
+<!-- ================= HERO ================= -->
+<header class="hero">
+  <div class="hero-inner">
+    <span class="eyebrow">⚓ Analyse &amp; Relaunch-Konzept · Juli 2026</span>
+    <h1>Ihr Bistro hat <em>4,9 Sterne</em>.<br>Ihre Website verdient das auch.</h1>
+    <p class="sub">Wir haben skipper-warnemuende.de komplett durchleuchtet — so gründlich wie ein Bootscheck vor dem Auslaufen: Design, Technik, Funktionen, Auffindbarkeit bei Google und die Psychologie Ihrer Gäste. Hier ist das Ergebnis, in klarer Sprache und ohne Fachchinesisch.</p>
+    <div class="hero-meta">
+      <div><b>Geprüfte Seite</b>skipper-warnemuende.de</div>
+      <div><b>Geprüfte Bereiche</b>6 (Design, Funktionen, Technik, Psychologie, SEO, Gäste-Passung)</div>
+      <div><b>Gefundene Punkte</b>31 Befunde · 12 davon kritisch</div>
+      <div><b>Erstellt von</b>Gradore Webdesign, Rostock</div>
+    </div>
+  </div>
+  <svg class="wave" viewBox="0 0 1440 34" preserveAspectRatio="none" aria-hidden="true"><path d="M0 20 C 120 34, 240 6, 360 20 C 480 34, 600 6, 720 20 C 840 34, 960 6, 1080 20 C 1200 34, 1320 6, 1440 20 L 1440 34 L 0 34 Z" fill="#faf6ee"/></svg>
+</header>
+
+<main>
+
+<!-- ================= GESAMTNOTE ================= -->
+<section id="gesamt">
+  <div class="kicker">Das Ergebnis auf einen Blick</div>
+  <h2 class="sec-title">Gesamtnote: mangelhaft — aber mit bestem Fundament für einen Neustart</h2>
+  <p class="sec-lead">Wir bewerten wie in der Schule: 100 Punkte wären perfekt. Ihre Website erreicht heute <b>27 von 100 Punkten</b>. Das klingt hart — die gute Nachricht: Fast alle Probleme liegen an der veralteten Technik und am fehlenden Konzept, nicht an Ihrem Betrieb. Genau das lässt sich mit einem Relaunch vollständig lösen.</p>
+
+  <div class="score-wrap">
+    <div class="score-hero">
+      <div class="chartbox">
+        <canvas id="totalChart" width="210" height="210" aria-label="Gesamt-Punktzahl 27 von 100"></canvas>
+        <div class="score-num"><b>27</b><span>von 100 Punkten</span></div>
+      </div>
+      <span class="grade">Schulnote: 5+ (mangelhaft)</span>
+      <p class="expl"><b>Was heißt das?</b> Stellen Sie sich Ihre Website als zweiten Gastraum vor — einen, der rund um die Uhr geöffnet hat. Aktuell ist dieser Gastraum schwer zu finden, die Tür klemmt 22 Sekunden lang, drinnen hängt keine Karte mit Öffnungszeiten, und reservieren kann man nur, wenn man selbst zum Telefon greift.</p>
+    </div>
+
+    <div class="subscores">
+      <div class="subcard">
+        <div class="head"><h3>🎨 Design &amp; erster Eindruck</h3><span class="pill crit">28</span></div>
+        <div class="meter"><i style="width:28%;background:var(--crit)"></i></div>
+        <p>Wirkt wie eine Website von 2010. Kein klarer Blickfang, kein Knopf zum Reservieren, verwirrende Elemente (z.&nbsp;B. ein Passwort-Feld für Besucher).</p>
+      </div>
+      <div class="subcard">
+        <div class="head"><h3>🧰 Funktionen für Gäste</h3><span class="pill crit">25</span></div>
+        <div class="meter"><i style="width:25%;background:var(--crit)"></i></div>
+        <p>Keine Online-Reservierung, keine Öffnungszeiten, kein Shop-Zugang, keine englische Version — obwohl Kreuzfahrtgäste direkt vor der Tür anlegen.</p>
+      </div>
+      <div class="subcard">
+        <div class="head"><h3>⚙️ Technik &amp; Code</h3><span class="pill crit">18</span></div>
+        <div class="meter"><i style="width:18%;background:var(--crit)"></i></div>
+        <p>Die Seite braucht bis zu 22 Sekunden zum Laden. Der technische Unterbau stammt aus einer anderen Internet-Ära und bremst alles aus.</p>
+      </div>
+      <div class="subcard">
+        <div class="head"><h3>🧠 Verkaufspsychologie</h3><span class="pill crit">22</span></div>
+        <div class="meter"><i style="width:22%;background:var(--crit)"></i></div>
+        <p>Ihr größter Schatz — 4,9 Sterne von echten Gästen — taucht auf der Website nirgends auf. Nichts weckt Appetit, nichts baut Vertrauen auf.</p>
+      </div>
+      <div class="subcard">
+        <div class="head"><h3>🔍 Google-Auffindbarkeit (SEO)</h3><span class="pill crit">35</span></div>
+        <div class="meter"><i style="width:35%;background:var(--warn)"></i></div>
+        <p>Google fehlen die wichtigsten „Ausweispapiere" der Seite. Wer „Frühstück Warnemünde" sucht, landet bei der Konkurrenz.</p>
+      </div>
+      <div class="subcard">
+        <div class="head"><h3>👥 Passung zu Ihren Gästen</h3><span class="pill warn">40</span></div>
+        <div class="meter"><i style="width:40%;background:var(--warn)"></i></div>
+        <p>Die Idee — Bistro, Shop, Zubehör, Service unter einem Dach — ist stark erklärt. Aber 8 von 10 Gäste-Typen finden ihre Antworten nicht (siehe unten).</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="badge-legend" aria-hidden="true">
+    <span><i class="dot" style="background:var(--ok)"></i> 80–100 = sehr gut</span>
+    <span><i class="dot" style="background:#c9a400"></i> 60–79 = okay, Luft nach oben</span>
+    <span><i class="dot" style="background:var(--warn)"></i> 40–59 = dringender Handlungsbedarf</span>
+    <span><i class="dot" style="background:var(--crit)"></i> 0–39 = kritisch</span>
+  </div>
+
+  <!-- Paradox -->
+  <div class="paradox" role="group" aria-label="Der Widerspruch">
+    <div>
+      <div class="big gold">4,9 ★</div>
+      <div class="lbl"><b style="color:#fff">Ihr Bistro bei Google</b> — 77 begeisterte Bewertungen. Gäste lieben Essen, Lage und Team.</div>
+    </div>
+    <div class="vs">VS.</div>
+    <div>
+      <div class="big red">27 / 100</div>
+      <div class="lbl"><b style="color:#fff">Ihre Website heute</b> — sie erzählt von dieser Qualität nichts und verliert Gäste, bevor sie je bei Ihnen sitzen.</div>
+    </div>
+  </div>
+  <p class="paradox-note"><b>Das ist die eigentliche Erkenntnis dieser Analyse:</b> Sie haben kein Qualitätsproblem — Sie haben ein Schaufenster-Problem. Der Betrieb ist erstklassig, nur das digitale Schaufenster zeigt es nicht. Genau deshalb lohnt sich der Neustart so sehr: Die Substanz ist längst da.</p>
+</section>
+
+<!-- ================= 6 BEREICHE IM DETAIL ================= -->
+<section id="bereiche">
+  <div class="kicker">Die Prüfung im Detail</div>
+  <h2 class="sec-title">Was wir gefunden haben — Bereich für Bereich</h2>
+  <p class="sec-lead">Klicken Sie auf einen Bereich, um alle Befunde zu sehen. Jeden Punkt erklären wir zweimal: <b>was</b> wir gefunden haben und <b>was es für Sie bedeutet</b>. Auch das Positive führen wir auf — davon gibt es nämlich mehr, als der Punktestand vermuten lässt.</p>
+
+  <!-- BEREICH 1: DESIGN -->
+  <div class="area" id="area-design">
+    <div class="area-head" onclick="toggleArea(this)" role="button" tabindex="0" aria-expanded="false">
+      <div class="area-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg></div>
+      <div class="t"><h3>Design &amp; erster Eindruck</h3><p>Wie wirkt die Seite in den ersten 5 Sekunden — dem Moment der Entscheidung?</p></div>
+      <div class="right"><span class="pill crit">28 / 100</span><svg class="chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="area-body">
+      <div class="explain"><b>So haben wir geprüft:</b> Wir tun so, als wären wir ein hungriger Gast auf dem Handy, der die Seite zum ersten Mal öffnet. Innerhalb von 5 Sekunden muss klar sein: Was gibt's hier? Für wen? Was soll ich jetzt tun? Und: Vertraue ich dem Laden? Das ist der gleiche Bauchgefühl-Moment wie beim Vorbeischlendern am Restaurant.</div>
+      <table class="findings">
+        <thead><tr><th>Befund</th><th>Was es bedeutet</th><th>Bewertung</th></tr></thead>
+        <tbody>
+          <tr><td>Login-Feld (Benutzername/Passwort) auf der Startseite</td><td>Gäste sehen als eines der ersten Elemente eine Passwort-Abfrage. Das gehört in den Verwaltungsbereich und verwirrt jeden Besucher — manche denken sogar, die Seite sei „nur für Mitglieder".</td><td><span class="sev crit">Kritisch</span></td></tr>
+          <tr><td>Kein Reservieren-Knopf</td><td>Die Reservierung ist nur eine Telefonnummer im Fließtext. Es gibt keinen auffälligen Knopf „Tisch reservieren" — das ist, als hätte Ihr Bistro keine Eingangstür, sondern nur ein Fenster zum Reinklettern.</td><td><span class="sev crit">Kritisch</span></td></tr>
+          <tr><td>Der Text „PAUSE" hängt sichtbar in der Navigation</td><td>Ein technischer Platzhalter ist öffentlich sichtbar. Wirkt ungepflegt — wie ein Zettel „Außer Betrieb" an der Tür, den niemand abgenommen hat.</td><td><span class="sev high">Hoch</span></td></tr>
+          <tr><td>Kein großes, appetitanregendes Einstiegsbild</td><td>Essen verkauft sich über die Augen. Die Startseite zeigt kein großformatiges Foto vom Backfisch, der Terrasse oder dem Hafenblick — dabei ist Ihre Lage Ihr stärkstes Argument.</td><td><span class="sev high">Hoch</span></td></tr>
+          <tr><td>Veraltete Gestaltungselemente (Druck-Symbol, doppelte Teilen-Knöpfe, Textwüsten)</td><td>Besucher ordnen das Design unbewusst ein: „alt" = „vielleicht auch die Küche?". Unfair, aber so funktioniert der erste Eindruck.</td><td><span class="sev high">Hoch</span></td></tr>
+          <tr><td>Keine klare Leserichtung / Hierarchie</td><td>Überschriften, Bilder und Texte konkurrieren miteinander. Das Auge weiß nicht, wo es zuerst hinschauen soll — Besucher „scannen" 3 Sekunden und geben auf.</td><td><span class="sev mid">Mittel</span></td></tr>
+          <tr><td>Das Logo ist stark und einprägsam</td><td>Steuerrad-Emblem, kräftiges Marineblau, klare Schrift — das Logo ist ein echtes Fundament. Es verdient eine Website auf gleichem Niveau und bleibt beim Relaunch das Herzstück der Marke.</td><td><span class="sev pos">✓ Stärke</span></td></tr>
+          <tr><td>Das Gebäude selbst ist ein Design-Geschenk</td><td>Moderner Holzbau direkt am Wasser, Boote im Hintergrund — bessere Bildmotive kann man sich nicht kaufen. Die neue Seite muss dieses Kapital nur endlich zeigen.</td><td><span class="sev pos">✓ Stärke</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- BEREICH 2: FUNKTIONEN -->
+  <div class="area" id="area-funktionen">
+    <div class="area-head" onclick="toggleArea(this)" role="button" tabindex="0" aria-expanded="false">
+      <div class="area-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
+      <div class="t"><h3>Funktionen — was Gästen fehlt</h3><p>Kann die Seite das, was Gäste 2026 von einem Gastro-Betrieb erwarten?</p></div>
+      <div class="right"><span class="pill crit">25 / 100</span><svg class="chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="area-body">
+      <div class="explain"><b>So haben wir geprüft:</b> Wir haben die 12 Aufgaben durchgespielt, die echte Gäste auf einer Bistro-Website erledigen wollen — vom „Haben die jetzt offen?" bis zum „Ich will Samstag 19 Uhr einen Tisch für 4". Für jede Aufgabe gilt: Schafft man sie in unter 30 Sekunden?</div>
+      <table class="findings">
+        <thead><tr><th>Funktion</th><th>Was es bedeutet</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Öffnungszeiten auf der Website</td><td>Die meistgesuchte Info überhaupt — und sie steht <b>nirgends auf Ihrer Website</b>. Nur wer bei Google Maps nachschaut, findet sie. Jeder zweite Besucher kommt genau deswegen.</td><td><span class="sev crit">Fehlt</span></td></tr>
+          <tr><td>Online-Tischreservierung</td><td>Es gibt nur die Telefonnummer. Abends um 23 Uhr, wenn Urlauber den nächsten Tag planen, nimmt niemand ab — die Reservierung geht an ein Restaurant mit Online-Buchung. Branchenweit kommen inzwischen 40–60&nbsp;% der Reservierungen online.</td><td><span class="sev crit">Fehlt</span></td></tr>
+          <tr><td>Speisekarte modern &amp; mobil lesbar</td><td>Die Karte existiert als lange Textliste — auf dem Handy mühsam. Keine Fotos, keine Kategorien-Sprungmarken, keine Kennzeichnung (vegetarisch, Allergene).</td><td><span class="sev high">Schwach</span></td></tr>
+          <tr><td>Englische Version</td><td>Warnemünde ist Deutschlands zweitgrößter Kreuzfahrthafen — internationale Gäste laufen an Ihrer Mole vorbei. Die Seite spricht nur Deutsch. Das ist verschenkter Umsatz in Laufweite.</td><td><span class="sev crit">Fehlt</span></td></tr>
+          <tr><td>Online-Shop erreichbar</td><td>Die Startseite verspricht einen Shop („online") — aber es führt kein Link dorthin. Ein Versprechen ohne Tür dahinter beschädigt Vertrauen.</td><td><span class="sev crit">Fehlt</span></td></tr>
+          <tr><td>Bootsservice-Anfrage</td><td>Für Wartung/Reparatur gibt es kein Anfrage-Formular (Bootstyp, Anliegen, Wunschtermin). Skipper müssen anrufen und hoffen — dabei wäre das ein perfekter Lead-Kanal.</td><td><span class="sev high">Fehlt</span></td></tr>
+          <tr><td>Fotogalerie / Einblicke</td><td>Keine Galerie von Terrasse, Gerichten, Hafenblick. Gäste wollen vorher sehen, wo sie sitzen werden — besonders bei Ausflugszielen.</td><td><span class="sev high">Fehlt</span></td></tr>
+          <tr><td>Google-Bewertungen eingebunden</td><td>4,9 Sterne — und kein einziges Gäste-Zitat auf der Website. Das stärkste Verkaufsargument bleibt unsichtbar.</td><td><span class="sev crit">Fehlt</span></td></tr>
+          <tr><td>Anfahrt mit Karte</td><td>Es gibt eine „Lage"-Unterseite, aber keine eingebettete Karte samt Parken-/S-Bahn-Hinweis direkt auf der Startseite, wo Gäste sie erwarten.</td><td><span class="sev mid">Schwach</span></td></tr>
+          <tr><td>WhatsApp-Kontakt</td><td>Ein WhatsApp-Link existiert bereits — gute Idee! Er teilt aber nur die Website, statt einen Chat für Fragen/Reservierungen zu öffnen. Fast richtig gedacht.</td><td><span class="sev mid">Halb</span></td></tr>
+          <tr><td>News &amp; Events werden gepflegt</td><td>Es gibt Bereiche für Neuigkeiten und Veranstaltungen, und sie werden genutzt. Diese Pflege-Routine ist wertvoll und wird in die neue Seite übernommen — nur schöner und schneller.</td><td><span class="sev pos">✓ Stärke</span></td></tr>
+          <tr><td>Telefon &amp; Adresse vorhanden</td><td>Die Basis-Kontaktdaten stehen auf der Seite, die Telefonnummer ist antippbar. Das Fundament stimmt.</td><td><span class="sev pos">✓ Stärke</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- BEREICH 3: TECHNIK & CODE -->
+  <div class="area" id="area-technik">
+    <div class="area-head" onclick="toggleArea(this)" role="button" tabindex="0" aria-expanded="false">
+      <div class="area-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
+      <div class="t"><h3>Technik &amp; Code — der Maschinenraum</h3><p>Was unter der Haube steckt und warum die Seite so langsam ist</p></div>
+      <div class="right"><span class="pill crit">18 / 100</span><svg class="chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="area-body">
+      <div class="explain"><b>So haben wir geprüft:</b> Wir haben den Quellcode der Seite gelesen — das ist der Bauplan, den der Browser bekommt. Man kann sich das wie einen Blick in den Maschinenraum eines Bootes vorstellen: Von außen sieht man's nicht, aber hier entscheidet sich, ob das Boot fährt oder liegen bleibt.</div>
+
+      <h3 style="font-family:'Archivo';color:var(--navy);margin:22px 0 4px;font-size:1rem">⏱️ Der wichtigste Messwert: die Ladezeit</h3>
+      <p style="font-size:.9rem;color:var(--ink-soft)">Gemessen beim Abruf der Startseite. Google-Faustregel: Nach 3 Sekunden ist die Hälfte der Handy-Besucher weg.</p>
+      <div class="speed">
+        <div class="speed-row"><span>Ihre Seite (schlechter Fall)</span><div class="speed-bar"><i style="width:100%;background:var(--crit)"></i></div><b style="color:var(--crit)">&gt; 60 Sek.*</b></div>
+        <div class="speed-row"><span>Ihre Seite (gemessen)</span><div class="speed-bar"><i style="width:37%;background:var(--warn)"></i></div><b style="color:var(--warn)">22 Sek.</b></div>
+        <div class="speed-row"><span>Google-Empfehlung</span><div class="speed-bar"><i style="width:5%;background:#c9a400"></i></div><b style="color:#9a7a00">3 Sek.</b></div>
+        <div class="speed-row"><span>Ziel der neuen Seite</span><div class="speed-bar"><i style="width:2.5%;background:var(--ok)"></i></div><b style="color:var(--ok)">&lt; 1,5 Sek.</b></div>
+      </div>
+      <p style="font-size:.8rem;color:var(--ink-soft);margin-top:10px">*Bei einem unserer Testabrufe hat der Server nach über 60 Sekunden ganz aufgegeben (Fehler 504). Für den Gast heißt das: weißer Bildschirm — er ist längst bei der Konkurrenz.</p>
+
+      <table class="findings">
+        <thead><tr><th>Befund</th><th>Was es bedeutet</th><th>Bewertung</th></tr></thead>
+        <tbody>
+          <tr><td>Technischer Unterbau von ca. 2010 (CMS „WebsiteBaker", Bauplan-Standard „XHTML" aus dem Jahr 2000)</td><td>Die Seite läuft auf einem System, das kaum noch weiterentwickelt wird. Wie ein Bootsmotor, für den es keine Ersatzteile mehr gibt: Jede Reparatur wird schwieriger, Sicherheitslücken bleiben offen.</td><td><span class="sev crit">Kritisch</span></td></tr>
+          <tr><td>Fehler im Grundgerüst (das HTML-Startelement existiert doppelt)</td><td>Der Bauplan der Seite ist formal fehlerhaft. Browser verzeihen viel — aber Google wertet saubere Technik als Qualitätssignal, und hier fehlt es schon am Fundament.</td><td><span class="sev high">Hoch</span></td></tr>
+          <tr><td>17 einzelne Design-Dateien + 22 Skripte werden nacheinander geladen</td><td>Wie 39 Kellner, die einzeln zur Küche laufen statt gemeinsam: Jeder Weg kostet Zeit. Genau daher kommen die 22 Sekunden. Moderne Seiten bündeln das in 2–3 Dateien.</td><td><span class="sev crit">Kritisch</span></td></tr>
+          <tr><td>Bilder unkomprimiert (Kopfbild allein: 657 KB)</td><td>Fotos werden in Druckqualität verschickt, wo Bildschirmqualität reicht. Ein einziges Bild lädt hier so lange wie anderswo die ganze Seite. Für Handynutzer mit schwachem Empfang am Hafen doppelt spürbar.</td><td><span class="sev high">Hoch</span></td></tr>
+          <tr><td>Kein „Lazy Loading" (0 von 30 Bildern)</td><td>Alle Bilder laden sofort — auch die ganz unten, die noch niemand sieht. Moderne Seiten laden Bilder erst, wenn man hinscrollt. Spart massiv Ladezeit.</td><td><span class="sev mid">Mittel</span></td></tr>
+          <tr><td>Der Link zum Verwaltungs-Login steht öffentlich im Seitenfuß</td><td>Jeder Besucher (und jeder automatische Angreifer) sieht, wo sich das Admin-Türchen befindet. In Kombination mit dem alten System ein echtes Sicherheitsrisiko.</td><td><span class="sev crit">Kritisch</span></td></tr>
+          <tr><td>E-Mail-Adresse nur über ein Skript klickbar</td><td>Die E-Mail ist so „versteckt", dass sie bei manchen Nutzern gar nicht funktioniert. Außerdem nennt sie eine andere Domain (skippers-bistro.de) als die Website — das verwirrt.</td><td><span class="sev mid">Mittel</span></td></tr>
+          <tr><td>HTTPS-Verschlüsselung ist aktiv</td><td>Das Schloss-Symbol im Browser ist da, Daten werden verschlüsselt übertragen, und alle Adress-Varianten leiten sauber auf die Hauptadresse um. Ein solides Stück Technik-Basis.</td><td><span class="sev pos">✓ Stärke</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- BEREICH 4: PSYCHOLOGIE -->
+  <div class="area" id="area-psychologie">
+    <div class="area-head" onclick="toggleArea(this)" role="button" tabindex="0" aria-expanded="false">
+      <div class="area-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+      <div class="t"><h3>Verkaufspsychologie — wie Gäste entscheiden</h3><p>Löst die Seite Appetit, Vertrauen und Handlungsdrang aus?</p></div>
+      <div class="right"><span class="pill crit">22 / 100</span><svg class="chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="area-body">
+      <div class="explain"><b>So haben wir geprüft:</b> Menschen entscheiden zu ~95&nbsp;% aus dem Bauch und begründen es hinterher mit dem Kopf. Eine gute Gastro-Website bedient deshalb drei Knöpfe: <b>Appetit</b> (Bilder, Sprache), <b>Vertrauen</b> (Bewertungen, echte Gesichter) und <b>Einfachheit</b> (ein klarer nächster Schritt). Wir haben geprüft, welche dieser Knöpfe Ihre Seite drückt.</div>
+      <table class="findings">
+        <thead><tr><th>Prinzip</th><th>Was es bedeutet</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Sozialer Beweis („Andere finden es gut, also ist es gut")</td><td>Der stärkste Kaufauslöser überhaupt. Sie besitzen ihn bereits: 4,9 Sterne, 77 Bewertungen, Sätze wie „Wir kommen definitiv wieder!". Auf der Website: <b>null davon sichtbar.</b> Das ist, als würde man Pokale im Keller lagern.</td><td><span class="sev crit">Ungenutzt</span></td></tr>
+          <tr><td>Appetit-Auslöser (Food-Fotografie, sinnliche Sprache)</td><td>„Backfisch frisch aus der Pfanne" ist ein guter Anfang — aber es fehlen die Bilder dazu und Formulierungen, die man schmecken kann („knusprig", „dampfend", „direkt vom Kutter"). Der Magen liest mit.</td><td><span class="sev crit">Fehlt</span></td></tr>
+          <tr><td>Ein klarer nächster Schritt (Handlungsaufforderung)</td><td>Die Seite sagt nirgends deutlich, was man tun soll. Gehirne mögen keine offenen Entscheidungen: Gibt es keinen offensichtlichen Knopf („Tisch reservieren"), wird gar nichts getan.</td><td><span class="sev crit">Fehlt</span></td></tr>
+          <tr><td>Das Alleinstellungsmerkmal wird verschenkt</td><td>Sie sind <b>das Bistro direkt am Yachthafen auf der Mittelmole</b> — mit Blick, den kein Wettbewerber bieten kann, plus Shop und Bootsservice unter einem Dach. Diese Geschichte wird in einem Absatz Fließtext versteckt statt zum Kern der Seite gemacht.</td><td><span class="sev high">Schwach</span></td></tr>
+          <tr><td>Verknappung &amp; Anlässe („Jetzt"-Gründe)</td><td>Nichts erzeugt sanften Zeitdruck: keine Wochenkarte, kein „Sonntags-Frühstück — Terrasse füllt sich schnell", keine Event-Hinweise mit Datum. Ohne „Warum jetzt?" wird der Besuch auf „irgendwann" verschoben — und vergessen.</td><td><span class="sev high">Fehlt</span></td></tr>
+          <tr><td>Gesichter &amp; Geschichte (Sympathie-Effekt)</td><td>Menschen vertrauen Menschen. Wer steht hinter Skipper's? Kein Team-Foto, kein Wort zur Entstehung. Die Bewertungen zeigen: Ihr Team („Kiwi"!) ist ein Sympathieträger — zeigen Sie es.</td><td><span class="sev mid">Fehlt</span></td></tr>
+          <tr><td>Authentischer norddeutscher Ton</td><td>„Echt norddeutsch", „Landratten", „kurzer Schnack" — dieser Ton ist charmant, unverwechselbar und passt perfekt zur Marke. Bitte unbedingt behalten und ausbauen!</td><td><span class="sev pos">✓ Stärke</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- BEREICH 5: SEO -->
+  <div class="area" id="area-seo">
+    <div class="area-head" onclick="toggleArea(this)" role="button" tabindex="0" aria-expanded="false">
+      <div class="area-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+      <div class="t"><h3>Google-Auffindbarkeit (SEO)</h3><p>Findet man Sie, wenn man „Frühstück Warnemünde" oder „Restaurant Yachthafen" sucht?</p></div>
+      <div class="right"><span class="pill crit">35 / 100</span><svg class="chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="area-body">
+      <div class="explain"><b>So haben wir geprüft:</b> SEO (Suchmaschinen-Optimierung) heißt: Google versteht, was Sie anbieten, und zeigt Sie den richtigen Leuten. Dafür braucht Google drei Dinge — einen <b>Lageplan</b> der Website (Sitemap), eine <b>Hausordnung</b> (robots.txt) und einen <b>Steckbrief</b> mit Öffnungszeiten, Küche, Bewertungen (sogenannte strukturierte Daten). Wir haben alle drei gesucht.</div>
+      <table class="findings">
+        <thead><tr><th>Befund</th><th>Was es bedeutet</th><th>Bewertung</th></tr></thead>
+        <tbody>
+          <tr><td>Kein Steckbrief für Google (strukturierte Daten fehlen komplett)</td><td>Google weiß nicht offiziell, dass Sie ein Restaurant sind — geschweige denn Öffnungszeiten, Speisekarte oder Ihre 4,9 Sterne. Deshalb erscheinen bei Ihnen keine Sternchen und Zusatzinfos im Suchergebnis, bei Wettbewerbern schon. Das kostet direkt Klicks.</td><td><span class="sev crit">Kritisch</span></td></tr>
+          <tr><td>Kein Lageplan (sitemap.xml) &amp; keine Hausordnung (robots.txt)</td><td>Beide Dateien fehlen (Fehler 404). Google muss Ihre Seite „blind ertasten" statt eine Übersicht zu bekommen. Neue Inhalte (Events, News) werden dadurch spät oder gar nicht gefunden.</td><td><span class="sev crit">Kritisch</span></td></tr>
+          <tr><td>Ladezeit als Ranking-Bremse</td><td>Google stuft langsame Seiten sichtbar herab — Tempo ist offizieller Ranking-Faktor. Mit 22 Sekunden verlieren Sie den Wettbewerb um „Restaurant Warnemünde" schon an der Startlinie, egal wie gut der Inhalt ist.</td><td><span class="sev crit">Kritisch</span></td></tr>
+          <tr><td>Kein Vorschau-Paket fürs Teilen (Open Graph fehlt)</td><td>Teilt jemand Ihre Seite per WhatsApp oder Facebook, erscheint kein schönes Vorschaubild mit Titel — nur ein nackter Link. Jede Weiterempfehlung wirkt dadurch halb so einladend.</td><td><span class="sev high">Hoch</span></td></tr>
+          <tr><td>25 Suchbegriffe in ein veraltetes „Keywords"-Feld gestopft</td><td>Dieses Feld ignoriert Google seit 2009 — es wirkt heute eher wie ein Spam-Signal. Die gute Nachricht: Die Begriffsliste selbst („Frühstück Warnemünde", „Fisch essen Warnemünde"…) ist strategisch goldrichtig. Sie gehört nur in echte Inhalte statt in ein unsichtbares Feld.</td><td><span class="sev mid">Mittel</span></td></tr>
+          <tr><td>20 von 30 Bildern ohne Beschreibung (Alt-Texte)</td><td>Google kann Bilder nicht „sehen" — es liest ihre Beschreibungen. Ohne sie tauchen Ihre Fotos in der Google-Bildersuche („Backfisch Warnemünde") nicht auf. Zudem sind Alt-Texte Pflicht für Barrierefreiheit.</td><td><span class="sev mid">Mittel</span></td></tr>
+          <tr><td>Nur eine Seite pro Thema fehlt (keine Unterseiten für Frühstück, Fisch, Terrasse, Bootsservice)</td><td>Wer bei Google „Frühstück Warnemünde" gewinnen will, braucht eine eigene Seite genau dazu. Aktuell konkurriert Ihre eine Startseite gegen spezialisierte Seiten der Wettbewerber — David gegen fünf Goliaths gleichzeitig.</td><td><span class="sev high">Hoch</span></td></tr>
+          <tr><td>Google-Unternehmensprofil ist hervorragend gepflegt</td><td>4,9 Sterne, 77 Bewertungen, Öffnungszeiten, Fotos — Ihr Google-Maps-Auftritt ist top und rettet aktuell Ihre lokale Sichtbarkeit fast im Alleingang. Die neue Website wird dieses Profil verstärken statt es allein zu lassen.</td><td><span class="sev pos">✓ Stärke</span></td></tr>
+          <tr><td>Titel &amp; Kurzbeschreibung vorhanden</td><td>Seitentitel und Meta-Beschreibung existieren und erwähnen die richtigen Begriffe. Solide Basis — im Relaunch werden sie pro Seite verkaufsstärker formuliert.</td><td><span class="sev pos">✓ Stärke</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PERSONAS ================= -->
+<section id="personas">
+  <div class="kicker">Ihre Gäste — 10 Typen, 10 Erwartungen</div>
+  <h2 class="sec-title">Für wen die neue Website gebaut wird</h2>
+  <p class="sec-lead">Eine Website ist nur so gut, wie sie die Fragen echter Menschen beantwortet. Wir haben 10 typische Gäste-Profile für Ihre Lage an der Mittelmole entwickelt — aus Ihren Google-Bewertungen, der Lage-Analyse und Tourismusdaten für Warnemünde. Bei jedem steht: Was diese Person sucht, und ob die heutige Seite liefert. <b>Ergebnis: 8 von 10 gehen leer aus.</b></p>
+
+  <div class="persona-grid">
+    <article class="persona"><span class="num">01</span>
+      <div class="avatar">⛵</div>
+      <h3>Der Gastlieger-Skipper</h3><div class="tagline">Segler, 45–70, macht im Yachthafen fest</div>
+      <p>Kommt übers Wasser, kennt die Gegend nicht. Sucht abends warmes Essen, morgens Frühstück und einen Schnack unter Seglern.</p>
+      <div class="qa"><b>Seine Frage</b>„Wie lange hat die Küche auf — und haben die Ersatz-Schäkel?"</div>
+      <div class="miss"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Heute: weder Öffnungszeiten noch Zubehör-Sortiment auf der Seite.</div>
+    </article>
+
+    <article class="persona"><span class="num">02</span>
+      <div class="avatar">🚢</div>
+      <h3>Die Kreuzfahrt-Touristin</h3><div class="tagline">International, 55+, 6 Stunden Landgang</div>
+      <p>Läuft vom Cruise Terminal direkt an der Mittelmole vorbei. Googelt „restaurant near cruise port Warnemünde" — auf Englisch.</p>
+      <div class="qa"><b>Ihre Frage</b>“Can we get fresh fish with a harbour view — right now?”</div>
+      <div class="miss"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Heute: keine englische Version — sie findet Sie schlicht nicht.</div>
+    </article>
+
+    <article class="persona"><span class="num">03</span>
+      <div class="avatar">👨‍👩‍👧‍👦</div>
+      <h3>Die Urlauber-Familie</h3><div class="tagline">Eltern mit 2 Kindern, Ferienwohnung in Warnemünde</div>
+      <p>Plant abends im Quartier den nächsten Tag. Braucht: unkompliziert, Terrasse, Pommes-Option für die Kleinen, Platz für den Buggy.</p>
+      <div class="qa"><b>Ihre Frage</b>„Gibt's was für Kinder — und können wir für Samstagmittag reservieren?"</div>
+      <div class="miss"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Heute: keine Online-Reservierung, Karte ohne Kinder-Hinweise.</div>
+    </article>
+
+    <article class="persona"><span class="num">04</span>
+      <div class="avatar">🥐</div>
+      <h3>Der Frühstücks-Sucher</h3><div class="tagline">Hotelgast ohne Frühstück, Paar 30–55</div>
+      <p>Sucht um 8:30 Uhr auf dem Handy „Frühstück Warnemünde". Entscheidet in 20 Sekunden anhand von Fotos und Bewertungen.</p>
+      <div class="qa"><b>Seine Frage</b>„Sieht das Frühstück gut aus — und ab wann gibt's das?"</div>
+      <div class="miss"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Heute: keine Frühstücks-Seite, keine Fotos, 22 Sek. Ladezeit = weg.</div>
+    </article>
+
+    <article class="persona"><span class="num">05</span>
+      <div class="avatar">🚲</div>
+      <h3>Der Ostseeküsten-Radler</h3><div class="tagline">Aktiv-Tourist, 40–65, unterwegs auf dem Radweg</div>
+      <p>Plant Etappen mit Pausenstopps. Sucht: schnelle, ehrliche Küche, sichere Radabstellplätze, Kaffee mit Aussicht.</p>
+      <div class="qa"><b>Seine Frage</b>„Lohnt der Abstecher auf die Mole — und komm ich da gut hin?"</div>
+      <div class="miss"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Heute: keine Anfahrts-Infos für Radler, keine Bilder der Lage.</div>
+    </article>
+
+    <article class="persona"><span class="num">06</span>
+      <div class="avatar">☕</div>
+      <h3>Das Best-Ager-Paar</h3><div class="tagline">60+, Tagesausflug aus Rostock &amp; Umland</div>
+      <p>Kommt für Kaffee, Kuchen und Hafenblick am Nachmittag. Liest gründlich, vertraut Bewertungen, mag große Schrift und klare Seiten.</p>
+      <div class="qa"><b>Ihre Frage</b>„Ist es dort gemütlich — und finden wir einen Parkplatz?"</div>
+      <div class="miss"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Heute: Park-Info versteckt im Text, keine Ambiente-Galerie.</div>
+    </article>
+
+    <article class="persona"><span class="num">07</span>
+      <div class="avatar">🔧</div>
+      <h3>Der Bootsbesitzer mit Problem</h3><div class="tagline">Motor- oder Segelbootbesitzer, Liegeplatz in der Region</div>
+      <p>Motor ruckelt, Saisonstart naht. Sucht „Bootsservice Rostock / Warnemünde" und will schnell wissen: Machen die das? Was kostet's ungefähr?</p>
+      <div class="qa"><b>Seine Frage</b>„Kann ich mein Anliegen direkt schildern und einen Termin anfragen?"</div>
+      <div class="miss"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Heute: kein Anfrage-Formular, keine Leistungs-/Preisübersicht.</div>
+    </article>
+
+    <article class="persona"><span class="num">08</span>
+      <div class="avatar">🎣</div>
+      <h3>Der Angler &amp; Wassersportler</h3><div class="tagline">Einheimisch &amp; Gast, früh unterwegs</div>
+      <p>Braucht morgens um 7 Kleinteile (Leine, Karabiner, Lampe) und danach einen heißen Kaffee. Kauft spontan, wenn er weiß, dass es das dort gibt.</p>
+      <div class="qa"><b>Seine Frage</b>„Haben die das Kleinzeug da — oder fahr ich umsonst raus auf die Mole?"</div>
+      <div class="miss"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Heute: Sortiment nirgends einsehbar, Shop-Versprechen ohne Link.</div>
+    </article>
+
+    <article class="persona"><span class="num">09</span>
+      <div class="avatar">🥂</div>
+      <h3>Die Feier-Planerin</h3><div class="tagline">Organisiert Geburtstag, Jubiläum oder Firmen-Sommerfest</div>
+      <p>Sucht eine besondere Location mit Wow-Blick für 15–40 Personen. Vergleicht 3–4 Anbieter per Website und fragt dort an, wo es einfach geht.</p>
+      <div class="qa"><b>Ihre Frage</b>„Geht bei euch eine geschlossene Feier — und was bietet ihr an?"</div>
+      <div class="miss"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Heute: kein Wort zu Feiern/Gruppen, kein Anfrageweg.</div>
+    </article>
+
+    <article class="persona"><span class="num">10</span>
+      <div class="avatar">📱</div>
+      <h3>Der lokale Insta-Entdecker</h3><div class="tagline">18–35, aus Rostock, immer auf Spot-Suche</div>
+      <p>Entdeckt Orte über Instagram und Google Maps, nie über klassische Websites — außer zum Fakten-Check (offen? Karte? Preise?). Bringt Freunde mit und postet.</p>
+      <div class="qa"><b>Seine Frage</b>„Ist der Spot fotogen — und lohnt der Sundowner da draußen?"</div>
+      <div class="miss"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Heute: kein Instagram-Auftritt verlinkt, keine teilbaren Inhalte.</div>
+    </article>
+  </div>
+</section>
+
+<!-- ================= WETTBEWERB ================= -->
+<section id="wettbewerb">
+  <div class="kicker">Der Blick über den Bug</div>
+  <h2 class="sec-title">So digital aufgestellt ist Ihre Nachbarschaft</h2>
+  <p class="sec-lead">Warnemünde hat rund 60 gastronomische Betriebe — der Kampf um den Gast wird längst online entschieden, bevor jemand loszieht. Wir haben Ihre Website gegen drei starke Wettbewerber am Alten Strom gestellt. Wichtig: Verglichen wird nur der <b>Web-Auftritt</b>, nicht die Küche.</p>
+
+  <div class="chart-card">
+    <h3>Digitaler Auftritt im Vergleich (Punkte von 100)</h3>
+    <div style="height:300px"><canvas id="compChart" aria-label="Wettbewerbsvergleich Balkendiagramm"></canvas></div>
+  </div>
+
+  <table class="findings" style="background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)">
+    <thead><tr><th>Anbieter</th><th>Was sie digital besser machen</th><th>Ihre Chance</th></tr></thead>
+    <tbody>
+      <tr><td>Hafenliebe<br><span style="font-weight:400;color:var(--ink-soft);font-size:.8rem">Am Alten Strom, „erste Reihe"</span></td><td>Emotionale Sprache, Event-Vermarktung, klare Positionierung („Hafenliebe-Momente"), Kapazitäten &amp; Feiern prominent erklärt.</td><td>Deren Stärke ist Inszenierung — Ihre ist Echtheit + einzigartige Lage <b>auf</b> der Mole statt nur daneben. Genau das erzählt die neue Seite.</td></tr>
+      <tr><td>Zum Stromer<br><span style="font-weight:400;color:var(--ink-soft);font-size:.8rem">4,7 ★ · 394 Bewertungen</span></td><td>Online-Tischreservierung direkt auf der Website, klare Reservierungsregeln, Gutschein-Verkauf.</td><td>Reservierung + Gutscheine sind Standard-Bausteine im Relaunch — damit ziehen Sie in 6 Wochen gleich.</td></tr>
+      <tr><td>Restaurant am Strom<br><span style="font-weight:400;color:var(--ink-soft);font-size:.8rem">4,0 ★ · 105 Bewertungen</span></td><td>Eigene Themen-Bereiche (Fischgerichte, Saisonales), gute Google-Vorschau mit Zusatzinfos.</td><td>Ihre Google-Bewertung (4,9) schlägt alle drei deutlich — sobald die Website sie zeigt und technisch mithält, kippt der Vergleich zu Ihren Gunsten.</td></tr>
+    </tbody>
+  </table>
+  <p class="comp-note"><b>Einordnung:</b> Sie treten aktuell mit dem schwächsten Web-Auftritt an — besitzen aber die beste Bewertung, die einzigartigste Lage und als Einzige den Vierklang Bistro + Shop + Zubehör + Service. Das digitale Rennen ist offen wie selten: Wer zuerst modernisiert, gewinnt die Suchanfragen der nächsten Jahre.</p>
+</section>
+
+<!-- ================= FAHRPLAN ================= -->
+<section id="fahrplan">
+  <div class="kicker">Die Route zum neuen Auftritt</div>
+  <h2 class="sec-title">Unser empfohlener Fahrplan — in 3 Etappen</h2>
+  <p class="sec-lead">Kein Flickwerk am alten System — das wäre, als würde man einen neuen Motor in einen rostigen Rumpf bauen. Wir empfehlen den kompletten Neubau auf moderner Technik, in klaren Etappen mit festen Ergebnissen.</p>
+
+  <div class="phases">
+    <div class="phase">
+      <div class="phase-head" style="background:var(--navy)"><div class="ph">Etappe 1 · Woche 1–2</div><h3>Leinen los: Fundament</h3></div>
+      <ul>
+        <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Design-Konzept in Ihrer CI (Logo-Blau, Gold, Holz &amp; Meer) abstimmen</li>
+        <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Foto-Shooting: Gerichte, Terrasse, Team, Hafenblick (goldene Stunde)</li>
+        <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Texte im Skipper's-Ton: Startseite, Bistro, Shop, Zubehör, Service</li>
+        <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Technik-Basis aufsetzen (modern, schnell, sicher)</li>
+      </ul>
+      <div class="foot">Ergebnis: freigegebenes Design + alle Inhalte stehen</div>
+    </div>
+    <div class="phase">
+      <div class="phase-head" style="background:var(--sea)"><div class="ph">Etappe 2 · Woche 3–5</div><h3>Volle Fahrt: Umsetzung</h3></div>
+      <ul>
+        <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Neue Website bauen: Start, Speise- &amp; Getränkekarte, Events, Feiern, Bootsservice, Shop-Bereich, Kontakt</li>
+        <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Online-Reservierung einbinden + WhatsApp-Direktkontakt</li>
+        <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>4,9-Sterne-Bewertungen prominent einbauen</li>
+        <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Englische Version für Kreuzfahrt- &amp; Auslandsgäste</li>
+        <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Einfache Selbst-Pflege: Karte, News &amp; Events ändern Sie künftig ohne Techniker</li>
+      </ul>
+      <div class="foot">Ergebnis: fertige Website zum Testen auf Ihrem Handy</div>
+    </div>
+    <div class="phase">
+      <div class="phase-head" style="background:var(--wood)"><div class="ph">Etappe 3 · Woche 6</div><h3>Anlegen: Start &amp; Sichtbarkeit</h3></div>
+      <ul>
+        <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Google-Steckbrief (strukturierte Daten), Lageplan &amp; Hausordnung für Suchmaschinen</li>
+        <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Alle alten Adressen leiten sauber auf die neuen um (kein Google-Ranking geht verloren)</li>
+        <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Tempo-Feinschliff: Ladezeit unter 1,5 Sekunden</li>
+        <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Google-Anmeldung, Erfolgsmessung &amp; Einweisung Ihres Teams</li>
+      </ul>
+      <div class="foot">Ergebnis: Live-Gang + messbar mehr Reservierungen</div>
+    </div>
+  </div>
+
+  <div class="chart-card">
+    <h3>Was der Relaunch realistisch bewirkt (Punkte-Prognose)</h3>
+    <div style="height:280px"><canvas id="projChart" aria-label="Prognose Vorher-Nachher"></canvas></div>
+    <p style="font-size:.8rem;color:var(--ink-soft);margin-top:12px">Prognose auf Basis der Befunde: Technik, Funktionen und Psychologie sind durch den Neubau direkt steuerbar; die Google-Sichtbarkeit wächst nach dem Start über 3–6 Monate, weil Suchmaschinen Vertrauen erst aufbauen.</p>
+  </div>
+</section>
+
+<!-- ================= CTA ================= -->
+<div class="cta">
+  <h2>Ihr Bistro ist längst <em>erstklassig</em>.<br>Geben wir Ihrer Website denselben Kurs.</h2>
+  <p>Das komplette Relaunch-Konzept — Seitenstruktur, Texte, Design-Vorgaben und Technik-Plan — liegt diesem Check bereits bei. Lassen Sie uns in einem kurzen Gespräch die Etappen und den Starttermin festmachen.</p>
+  <a class="btn" href="mailto:info@gradore.de?subject=Relaunch%20Skipper's%20Bistro%20—%20Gespr%C3%A4chstermin">Gespräch vereinbaren →</a>
+  <p style="font-size:.85rem;margin-top:18px;color:#b7b1e0">Gradore Webdesign · Rostock · info@gradore.de · +49 162 1303728</p>
+</div>
+
+<footer>
+  <b>Website-Check Skipper's Bistro</b> · erstellt im Juli 2026 von Gradore (gradore.de), Rudolf-Tarnow-Str. 17, 18055 Rostock<br>
+  Datengrundlage: Live-Analyse von skipper-warnemuende.de (Quellcode, Ladezeiten, Struktur), Google-Unternehmensprofil, öffentliche Wettbewerber-Websites. Alle Bewertungen beziehen sich ausschließlich auf den Web-Auftritt.
+</footer>
+</main>
+
+<script>
+// ===== Accordion =====
+function toggleArea(head){
+  const area = head.parentElement;
+  const open = area.classList.toggle('open');
+  head.setAttribute('aria-expanded', open);
+}
+document.querySelectorAll('.area-head').forEach(h=>{
+  h.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleArea(h);}});
+});
+// Ersten Bereich geöffnet starten
+document.getElementById('area-design').classList.add('open');
+
+// ===== Charts =====
+const navy='#211c5c', gold='#ffaf04', crit='#c8341f', warn='#e07b00', ok='#2e7d4f', sea='#327893', line='#e6ddcc';
+Chart.defaults.font.family="'Inter',sans-serif";
+Chart.defaults.color='#5b566e';
+
+// Gesamt-Ring
+new Chart(document.getElementById('totalChart'),{
+  type:'doughnut',
+  data:{datasets:[{data:[27,73],backgroundColor:[crit,'#efe8d8'],borderWidth:0,cutout:'76%'}]},
+  options:{plugins:{legend:{display:false},tooltip:{enabled:false}},animation:{animateRotate:true,duration:1200}}
+});
+
+// Wettbewerb
+new Chart(document.getElementById('compChart'),{
+  type:'bar',
+  data:{
+    labels:['Skipper\'s (heute)','Restaurant am Strom','Zum Stromer','Hafenliebe','Skipper\'s (nach Relaunch — Ziel)'],
+    datasets:[{data:[27,58,66,74,88],backgroundColor:[crit,'#c9a400','#c9a400',warn,ok],borderRadius:8,barThickness:26}]
+  },
+  options:{
+    indexAxis:'y',responsive:true,maintainAspectRatio:false,
+    scales:{x:{min:0,max:100,grid:{color:line}},y:{grid:{display:false}}},
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.x+' / 100 Punkte (nur Web-Auftritt)'}}}
+  }
+});
+
+// Prognose Vorher/Nachher
+new Chart(document.getElementById('projChart'),{
+  type:'bar',
+  data:{
+    labels:['Design','Funktionen','Technik','Psychologie','SEO','Gäste-Passung'],
+    datasets:[
+      {label:'Heute',data:[28,25,18,22,35,40],backgroundColor:crit,borderRadius:6,barThickness:20},
+      {label:'Nach Relaunch (Ziel)',data:[90,88,92,85,80,90],backgroundColor:ok,borderRadius:6,barThickness:20}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    scales:{y:{min:0,max:100,grid:{color:line}},x:{grid:{display:false}}},
+    plugins:{legend:{position:'bottom',labels:{usePointStyle:true,pointStyleWidth:10}}}
+  }
+});
+</script>
+</body>
+</html>
