@@ -24,6 +24,12 @@ Neubau von `skipper-warnemuende.de` auf **Lovable** (React + TypeScript + Tailwi
 
 **Stand nach Abschluss:** Typecheck clean · Lighthouse-relevante Punkte (LCP-Budget, CLS-feste Placeholder, font-display swap, lazy images, keine Third-Party-Scripts vor Interaktion) umgesetzt · Sitemap mit xhtml:link-hreflang + lastmod + Event/News-URLs · 301-Redirect-Map vollständig.
 
+## CI-Update (Runde 2, 2026-07-07): Farben vom echten Logo abgeleitet
+
+Der Betreiber hat das verbindliche Logo geliefert (Möwe + „SKIPPER'S BISTRO", Navy/Rot). Gesampelte Markenfarben: **Navy #211C5C** (identisch zum bisherigen Token) und **Logo-Rot #E30021**. Der Gold-Akzent aus dem ursprünglichen Konzept wurde vollständig durch das Logo-Rot ersetzt (`--red #E30021`, `--red-deep #B80019`, `--red-soft #FBE5E9`); Kontrast geprüft (Weiß auf Rot 4,9:1 AA). Header auf hell (Paper) umgestellt, damit das Logo (JPG, weißer Hintergrund) sauber sitzt; Footer/Mobile-Sheet nutzen eine weiße Möwen-SVG-Marke; Favicon = Möwe weiß auf Navy. **Abweichung vom Konzept Teil 2.2 ist beabsichtigt und vom Kunden beauftragt** („CI vom Logo ableiten").
+
+Außerdem eingebaut: 5 echte Fotos (Terrasse → Hero + /terrasse + og:image, Gäste → Bento/Feiern, Scampi → Menü-Teaser, Segelcrew → Bootsservice, Online-Shop → /shop) und **Allergene sichtbar an jedem Gericht** (LMIV-Buchstabencodes in Seed-Daten, Anzeige auf /speisekarte, /en/menu und im Homepage-Teaser, Legende druckbar).
+
 ## Verbindliche Quellen
 
 - [`docs/relaunch-konzept.md`](docs/relaunch-konzept.md) — Masterdokument (CI-Tokens, Copy-Deck, Sitemap, SEO-Blueprint, Supabase-Schema). Hierarchie: Teil 2 (CI) + Teil 3 (Anti-KI-Manifest) unverhandelbar.
@@ -39,7 +45,7 @@ Neubau von `skipper-warnemuende.de` auf **Lovable** (React + TypeScript + Tailwi
 
 ## Offene Punkte (vom Kunden einsammeln — Teil 12 des Konzepts)
 
-- Logo-Originaldatei (SVG/AI) → ersetzt die Interim-`<Logo />`-Komponente. **Hinweis:** das gelieferte Logo-Bild (Möwe, Navy/Rot „SKIPPER'S BISTRO") weicht vom im Konzept beschriebenen Steuerrad-Emblem ab — vor Einbau mit Kunde/Agentur klären, welche Datei verbindlich ist.
-- Echte Fotos gemäß Shooting-Liste (PhotoPlaceholder-Plates sind mit Motiv-Beschriftungen vorbereitet).
+- ~~Logo-Originaldatei~~ ✅ eingebaut (JPG, 1000×278). Für gestochen scharfe Darstellung/Retina später SVG- oder hochauflösende PNG-Version mit Transparenz nachliefern.
+- Echte Fotos gemäß Shooting-Liste — 5 Motive bereits eingebaut; Hero-Terrassenfoto liegt nur in 500×308 vor → **höher aufgelöste Version nachliefern**. Restliche Slots weiterhin als beschriftete PhotoPlaceholder.
 - Finale Speisekarte + Allergene (LMIV), Google-Business-Profil-URL, Rechtstexte (Impressum/Datenschutz juristisch prüfen).
 - Entscheidung Reservierungstool Phase 1b (resmio/OpenTable/Quandoo) — Formular ist Fallback.
