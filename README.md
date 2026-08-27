@@ -37,7 +37,11 @@ Außerdem eingebaut: 5 echte Fotos (Terrasse → Hero + /terrasse + og:image, G�
 - **Draft-Seeds:** 2 Events + 1 News als unveröffentlichte „[ENTWURF] Beispiel:…"-Vorlagen, damit der Kunde den Workflow im Admin sieht — öffentlich unsichtbar, keine erfundenen Inhalte.
 - Nebenbei behoben: Footer-Link-Kontrast nach der CI-Umstellung.
 
-**Hoster der Alt-Domain:** aus der Build-Umgebung nicht ermittelbar (DNS/WHOIS vom Egress-Proxy blockiert). Ermittlung: `nslookup -type=NS skipper-warnemuende.de` bzw. https://webwhois.denic.de — Provider steht in den NS-Einträgen. Für den Cutover wird ohnehin der DNS-Zugang des Kunden benötigt (Launch-Checkliste Teil 13).
+**Hoster der Alt-Domain (per DENIC-WHOIS geklärt, 2026-08-27):**
+- Nameserver `docks16.rzone.de` / `shades11.rzone.de` → **rzone.de = STRATO**: Webhosting + DNS der Altseite laufen auf einem Strato-Paket.
+- Verwaltendes DENIC-Mitglied: **InterNetX GmbH** (Registrar-Großhändler) → die Domain-Registrierung läuft über einen InterNetX-Reseller, nicht direkt über Strato.
+- Domaininhaber-Kontakt: `info@hanse-sound.com` — eine **dritte Partei** (vermutlich der alte Dienstleister). DENIC-Bestätigungslinks/AuthInfo-Mails landen dort!
+- **Cutover-Konsequenz:** Strato-Zugang des Kunden beschaffen (DNS-Records dort auf Lovable zeigen lassen) ODER Domain per AuthInfo/KK zum Wunsch-Provider umziehen — dafür Koordination mit dem hanse-sound-Kontakt nötig. Inhaber-E-Mail bei DENIC auf eine Kundenadresse ändern lassen (Ownership sichern). Altes Strato-Hosting erst nach 4 Wochen Puffer kündigen (Launch-Checkliste Teil 13).
 
 ## Verbindliche Quellen
 
