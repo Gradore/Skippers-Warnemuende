@@ -30,6 +30,15 @@ Der Betreiber hat das verbindliche Logo geliefert (Möwe + „SKIPPER'S BISTRO",
 
 Außerdem eingebaut: 5 echte Fotos (Terrasse → Hero + /terrasse + og:image, Gäste → Bento/Feiern, Scampi → Menü-Teaser, Segelcrew → Bootsservice, Online-Shop → /shop) und **Allergene sichtbar an jedem Gericht** (LMIV-Buchstabencodes in Seed-Daten, Anzeige auf /speisekarte, /en/menu und im Homepage-Teaser, Legende druckbar).
 
+## Ausbau-Runde 3 (2026-08-27): Gericht-Bilder, öffentliche Galerie, Draft-Seeds
+
+- **Speisekarten-Verwaltung im Admin jetzt vollständig:** Name, Beschreibung (DE/EN), Preis (Inline-Edit), Allergene (Multi-Select) und **Bild pro Gericht** (Upload JPG/PNG/WebP bis 6 MB in Supabase Storage, Vorschau, „Bild entfernen"; Migration `menu_items.image_url`). Öffentliche Karte zeigt runde Thumbnails nur bei vorhandenem Bild; Homepage-Teaser zieht Bilder aus der DB (Scampi-Foto jetzt DB-gepflegt statt Code-Hack).
+- **Öffentliche Galerie `/galerie`** (Konzept F9): Masonry, Kategorie-Filter (Essen/Terrasse/Hafen/Team), barrierefreie Lightbox (Escape/Pfeile/Focus-Trap), mit den 5 vorhandenen Fotos geseedet; Footer-Link DE/EN + „EINBLICKE"-Streifen auf der Startseite; Sitemap/Breadcrumbs/OG gepflegt.
+- **Draft-Seeds:** 2 Events + 1 News als unveröffentlichte „[ENTWURF] Beispiel:…"-Vorlagen, damit der Kunde den Workflow im Admin sieht — öffentlich unsichtbar, keine erfundenen Inhalte.
+- Nebenbei behoben: Footer-Link-Kontrast nach der CI-Umstellung.
+
+**Hoster der Alt-Domain:** aus der Build-Umgebung nicht ermittelbar (DNS/WHOIS vom Egress-Proxy blockiert). Ermittlung: `nslookup -type=NS skipper-warnemuende.de` bzw. https://webwhois.denic.de — Provider steht in den NS-Einträgen. Für den Cutover wird ohnehin der DNS-Zugang des Kunden benötigt (Launch-Checkliste Teil 13).
+
 ## Verbindliche Quellen
 
 - [`docs/relaunch-konzept.md`](docs/relaunch-konzept.md) — Masterdokument (CI-Tokens, Copy-Deck, Sitemap, SEO-Blueprint, Supabase-Schema). Hierarchie: Teil 2 (CI) + Teil 3 (Anti-KI-Manifest) unverhandelbar.
