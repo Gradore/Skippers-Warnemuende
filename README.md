@@ -49,6 +49,15 @@ Außerdem eingebaut: 5 echte Fotos (Terrasse → Hero + /terrasse + og:image, G�
 - [`docs/website-check.html`](docs/website-check.html) — Audit der Altseite (27/100), Begründung des Relaunches.
 - [`docs/lovable-master-prompt.md`](docs/lovable-master-prompt.md) — der exakte an Lovable gesendete Master-Prompt (Teil 11 des Konzepts + Redirects/Meta-Erweiterungen).
 
+## GEO/AEO-Runde (2026-09-01): Auffindbarkeit in KI-Assistenten (ChatGPT, Gemini, Claude, Perplexity)
+
+- **robots.txt:** explizite Allow-Blöcke für 17 KI-Crawler (GPTBot, OAI-SearchBot, ChatGPT-User, ClaudeBot, Claude-User, Claude-SearchBot, anthropic-ai, Google-Extended, PerplexityBot, Perplexity-User, Bingbot, CCBot, Applebot(-Extended), Meta-ExternalAgent, Amazonbot, DuckAssistBot) + Hinweis auf /llms.txt.
+- **/llms.txt** (llmstxt.org-Konvention): maschinenlesbare Fakten (NAP, Koordinaten, Zeiten, 4,9★/77, Anreise) + Seitenliste mit absoluten URLs + EN-Absatz. Nur verifizierte Fakten.
+- **/faq + /en/faq:** 8 wörtlich zitierfähige Antworten (Lage, Zeiten, Frühstück, Reservierung, Anlegen per Boot, Hunde, Parken, Zubehör/Service) mit FAQPage-JSON-LD (de/en), hreflang, Footer-Link, Sitemap.
+- **Entity-Signale:** `sameAs` (Google-Profil, erweiterbar) im Restaurant-JSON-LD; NAP-Konsistenz geprüft (alles aus einer `CONTACT`-Konstante); Startseite trägt einen crawlbaren Volltext-Entity-Satz.
+
+**Off-Site-To-dos (nur Betreiber/Agentur, siehe Abschlussbericht):** Bing Webmaster Tools + Sitemap (ChatGPT-Suche nutzt Bing), Google Business Profile pflegen (Gemini), TripAdvisor claimen, Hafen-/Ostsee-Portale, Bewertungen sammeln.
+
 ## Nächste Schritte (Betreiber/Agentur)
 
 1. **Erster Admin-Login:** auf `/admin` mit info@skippers-bistro.de oder info@gradore.de registrieren — die Whitelist vergibt die Admin-Rolle automatisch.
