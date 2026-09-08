@@ -58,6 +58,21 @@ Außerdem eingebaut: 5 echte Fotos (Terrasse → Hero + /terrasse + og:image, G�
 
 **Off-Site-To-dos (nur Betreiber/Agentur, siehe Abschlussbericht):** Bing Webmaster Tools + Sitemap (ChatGPT-Suche nutzt Bing), Google Business Profile pflegen (Gemini), TripAdvisor claimen, Hafen-/Ostsee-Portale, Bewertungen sammeln.
 
+## Runde „Admin-Zugang + Statistiken" (2026-09-08)
+
+- **/admin Erst-Login:** Login-Karte mit Tabs „Anmelden"/„Registrieren" + „Passwort vergessen" (Supabase-Reset mit /admin/reset-callback). E-Mail-Bestätigung ist Pflicht (Auto-Confirm aus); die Admin-Rolle wird erst bei **bestätigter** Whitelist-Adresse vergeben (Trigger auf email_confirmed_at). Keine Whitelist-Leaks, neutrale Fehlermeldungen.
+- **Zugriffszahlen im Admin („Statistiken"):** cookielose Seitenaufruf-Zählung (page_views: Pfad/Sprache/Gerät/Referrer-Domain — keine IP, kein UA, keine IDs, kein Browser-Storage), DNT + Global Privacy Control respektiert, /admin nie gezählt, Slugs normalisiert. Auswertung: 7/30/90 Tage, Aufrufe/Tag-Chart, Kennzahlen, Top-Seiten, Referrer, DE/EN. Automatische Löschung nach 400 Tagen (pg_cron, täglich 03:30). Datenschutz-Abschnitt „Reichweitenmessung (cookielos)" ergänzt (Anwalt prüfen!).
+- **Security-Audit (Workflow, 9 Agenten):** 4 bestätigte Findings, alle gefixt — GPC via navigator gelesen; page_views-Inserts auf 4 Spalten beschränkt + serverseitige id/created_at (Backdating unmöglich, Retention nicht umgehbar); Rollenvergabe erst nach Mail-Bestätigung (Konto-Kaperung der erratbaren Bistro-Adresse verhindert); Flood-Quota 600/min.
+
+## Feedback-Runde Betreiber (2026-09-08)
+
+- Startseiten-Teaser zeigt exakt: Backfisch mit Dorschfilet, Dorschfilet mit Nordseekrabben, Wiener Kalbsschnitzel (`is_featured`-Toggle pro Gericht im Admin, mit Fallback).
+- Bootsservice überall auf **Motor- & Segelcheck + Saisonvorbereitung** reduziert („Wartung/kleine Reparaturen" komplett entfernt: Seiten, Meta, JSON-LD, FAQ DE/EN, llms.txt, Bento-Kachel).
+- „Für Skipper"-Dropdown aus der Navigation entfernt (Bootsservice/Bootszubehör im Footer).
+- Transparentes Logo (Weiß freigestellt, 968×237 PNG) überall: Header, Speisekarten-Kopf (zentriert über H1), Druck-Stylesheet.
+- Kategorie-Navigation der Speisekarte neu: desktop mittig, mobil wischbar mit Kantenverlauf + Scroll-Snap, aktiver Chip rot/weiß, scrollt sich selbst ins Bild (DE + EN).
+- Hinweis: `/ueber-uns` wurde vom Betreiber direkt im Lovable-Editor entfernt; ebenso Hero/Positionierung überarbeitet. **Seite ist publiziert:** https://skippers-bistro-web.lovable.app
+
 ## Nächste Schritte (Betreiber/Agentur)
 
 1. **Erster Admin-Login:** auf `/admin` mit info@skippers-bistro.de oder info@gradore.de registrieren — die Whitelist vergibt die Admin-Rolle automatisch.
